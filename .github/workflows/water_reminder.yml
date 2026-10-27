@@ -1,0 +1,28 @@
+name: Hourly Water Reminder
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs at the top of every hour (UTC)
+  workflow_dispatch:
+
+jobs:
+  send-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Send WhatsApp Reminder
+        env:
+          EVOLUTION_API_URL: ${{ secrets.EVOLUTION_API_URL }}
+          EVOLUTION_API_KEY: ${{ secrets.EVOLUTION_API_KEY }}
+          WHATSAPP_NUMBER: ${{ secrets.WHATSAPP_NUMBER }}
+        run: python send_reminder.py
